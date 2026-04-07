@@ -73,7 +73,7 @@ require('jump').config({
 The following settings are available (along with their defaults):
 
 ```lua
-local CONFIG = {
+{
   -- The labels that may be used, in order of their preference.
   labels = 'tnseriaogmplfuwyqbjdhvkzxc',
 
