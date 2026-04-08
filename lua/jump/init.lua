@@ -5,6 +5,7 @@ local M = {}
 local NS = api.nvim_create_namespace('jump')
 local CR = api.nvim_replace_termcodes('<Cr>', true, true, true)
 local BS = api.nvim_replace_termcodes('<Bs>', true, true, true)
+local CTRL_H = api.nvim_replace_termcodes('<C-h>', true, true, true)
 local ESC = api.nvim_replace_termcodes('<Esc>', true, true, true)
 local LABELS = {}
 local CONFIG = {
@@ -99,7 +100,7 @@ function M.start()
       end
 
       break
-    elseif char == BS then
+    elseif char == BS or char == CTRL_H then
       chars = chars:sub(1, #chars - 1)
     elseif jump_to then
       api.nvim_win_set_cursor(win, jump_to)
