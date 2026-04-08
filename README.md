@@ -27,7 +27,7 @@ Flash is more powerful but in my experience Folke's plugins tend to be janky
 (e.g. weird/buggy behavior), issues just get closed automatically with no
 response and maintenance is spotty.
 
-mini.jump is a good jump plugin but I don't like its approach to labelling and
+mini.jump2d is a good jump plugin but I don't like its approach to labelling and
 jumping as it results in a very noisy window full of labels. Like most mini.nvim
 plugins you _can_ extend it (and this is something I experimented with a lot),
 but there's only so far this will get you.
