@@ -66,6 +66,61 @@ local function available_labels(lines, matches)
   return avail
 end
 
+local function paint_matches(matches, buf, active, lines)
+  local avail = available_labels(lines, matches)
+
+  for _, match in ipairs(matches) do
+    local label = nil
+
+    for _, cur in ipairs(LABELS) do
+      if avail[cur] then
+        label = cur
+        avail[cur] = false
+        break
+      end
+    end
+
+    vim.hl.range(
+      buf,
+      NS,
+      CONFIG.search,
+      { match.line, match.start_col },
+      { match.line, match.end_col },
+      { priority = 1 }
+    )
+
+    if label then
+      active[label] = { match.line + 1, match.start_col }
+      api.nvim_buf_set_extmark(buf, NS, match.line, match.start_col, {
+        virt_text = { { label, CONFIG.label } },
+        virt_text_pos = 'overlay',
+        priority = 2,
+      })
+    end
+  end
+end
+
+function M.pick(params)
+  local win = api.nvim_get_current_win()
+  local buf = api.nvim_win_get_buf(win)
+  local info = fn.getwininfo(win)[1]
+  local top = info.topline
+  local bot = info.botline
+  local active = {}
+  local lines = api.nvim_buf_get_lines(buf, top - 1, bot, true)
+  local chars = ''
+  paint_matches(params.targets, buf, active, lines)
+
+  api.nvim_echo({ { '/' .. chars, '' } }, false, {})
+
+  local char = fn.getcharstr(-1)
+  local jump_to = active[char]
+  if jump_to then
+    api.nvim_win_set_cursor(win, jump_to)
+    params.action()
+  end
+end
+
 function M.start()
   local win = api.nvim_get_current_win()
   local buf = api.nvim_win_get_buf(win)
@@ -115,37 +170,7 @@ function M.start()
     if #chars > 0 then
       search(chars, lines, top, matches)
 
-      local avail = available_labels(lines, matches)
-
-      for _, match in ipairs(matches) do
-        local label = nil
-
-        for _, cur in ipairs(LABELS) do
-          if avail[cur] then
-            label = cur
-            avail[cur] = false
-            break
-          end
-        end
-
-        vim.hl.range(
-          buf,
-          NS,
-          CONFIG.search,
-          { match.line, match.start_col },
-          { match.line, match.end_col },
-          { priority = 1 }
-        )
-
-        if label then
-          active[label] = { match.line + 1, match.start_col }
-          api.nvim_buf_set_extmark(buf, NS, match.line, match.start_col, {
-            virt_text = { { label, CONFIG.label } },
-            virt_text_pos = 'overlay',
-            priority = 2,
-          })
-        end
-      end
+      paint_matches(matches, buf, active, lines)
     end
 
     vim.cmd.redraw()
