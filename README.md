@@ -64,7 +64,12 @@ Install the plugin using your favorite plugin manager, then create a mapping
 ```lua
 vim.keymap.set({ 'n', 'x', 'o' }, 's', require('jump').start, {})
 ```
+To make `f` and `t` work with matches of arbitrary lengths and with labels in operator-pending mode, create the following mappings:
 
+```lua
+vim.keymap.set('o', 'f', function require('jump').start({ operator_mode = 'inclusive' }) end, {})
+vim.keymap.set('o', 't', function require('jump').start({ operator_mode = 'exclusive' }) end, {})
+```
 If you want to change the labels to use or the highlight groups, use the `setup`
 function:
 
