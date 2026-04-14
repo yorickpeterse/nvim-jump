@@ -163,6 +163,21 @@ function M.setup(opts)
   end
 
   LABELS = fn.split(CONFIG.labels, '\\zs')
+
+  if type(CONFIG.label) == 'table' then
+    local attrs = CONFIG.label
+    CONFIG.label = 'JumpLabel'
+    -- Apply now (setup may run after the colorscheme is already loaded) and
+    -- on every ColorScheme event (themes clear user-defined highlights).
+    local function apply()
+      api.nvim_set_hl(0, 'JumpLabel', attrs)
+    end
+    apply()
+    api.nvim_create_autocmd('ColorScheme', {
+      group = api.nvim_create_augroup('jump.nvim.highlights', { clear = true }),
+      callback = apply,
+    })
+  end
 end
 
 M.setup()

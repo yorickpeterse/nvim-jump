@@ -100,6 +100,23 @@ require('jump').setup({
 The default highlight group for labels is `FlashLabel` so migrating from flash
 is easier.
 
+`label` accepts either a highlight group name (string) or a table of
+`nvim_set_hl` attributes. When a table is given, the plugin manages a
+`JumpLabel` group with those attributes and re-applies them on `ColorScheme`
+so your colors survive theme changes:
+
+```lua
+require('jump').setup({
+  label = { fg = '#ffff00', bg = '#000000', bold = true },
+})
+```
+
+Or point `label` at any highlight group name you manage yourself:
+
+```lua
+require('jump').setup({ label = 'IncSearch' })
+```
+
 ## License
 
 All source code in this repository is licensed under the Mozilla Public License
